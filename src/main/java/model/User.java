@@ -1,4 +1,4 @@
-package jm.task.core.jdbc.model;
+package model;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -26,6 +26,12 @@ public class User {
         this.name = name;
         this.lastName = lastName;
         this.age = age;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" + "id = " + id + ", name = " + name +
+                ", lastName = " + lastName + ", age = " + age + "}";
     }
 
     public Long getId() {

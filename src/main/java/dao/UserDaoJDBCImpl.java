@@ -1,8 +1,10 @@
-package jm.task.core.jdbc.dao;
+package dao;
 
-import jm.task.core.jdbc.model.User;
-import jm.task.core.jdbc.util.Util;
+import dao.UserDao;
+import model.User;
+import util.Util;
 
+import javax.naming.NamingException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +15,12 @@ public class UserDaoJDBCImpl implements UserDao {
     private static final String SELECT_ALL_SQL   = "SELECT * FROM usersTable";
     private static final String REMOVE_BY_ID_SQL = "DELETE FROM usersTable WHERE id = ?";
     private static final String SAVE_USER_SQL    = "INSERT INTO usersTable (name, lastName, age) VALUES (?, ?, ?)";
-    private static final String DROP_TABLE_SQL   = "DROP TABLE IF NOT EXISTS usersTable";
+    private static final String DROP_TABLE_SQL   = "DROP TABLE IF EXISTS usersTable";
     private static final String CREATE_TABLE_SQL = "CREATE TABLE IF NOT EXISTS usersTable " +
                                                    "(id INT AUTO_INCREMENT PRIMARY KEY, " +
                                                    " name VARCHAR(30), " +
                                                    " lastName VARCHAR (30), " +
-                                                   " age INT))";
+                                                   " age INT)";
 
     public UserDaoJDBCImpl() {
 
@@ -45,13 +47,13 @@ public class UserDaoJDBCImpl implements UserDao {
             conn.setAutoCommit(false);
 
             pstmt = conn.prepareStatement(SAVE_USER_SQL);
-            pstmt.setString(2, name);
-            pstmt.setString(3, lastName);
-            pstmt.setByte(4, age);
+            pstmt.setString(1, name);
+            pstmt.setString(2, lastName);
+            pstmt.setByte(3, age);
             pstmt.executeUpdate();
 
             conn.commit();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             rollback(conn);
             e.printStackTrace();
         } finally {
@@ -76,7 +78,7 @@ public class UserDaoJDBCImpl implements UserDao {
             pstmt.executeUpdate();
 
             conn.commit();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             rollback(conn);
             e.printStackTrace();
         } finally {
@@ -104,10 +106,11 @@ public class UserDaoJDBCImpl implements UserDao {
                 User user = new User(rs.getString(2),
                                      rs.getString(3),
                                      rs.getByte(4));
+                user.setId(rs.getLong(1));
                 result.add(user);
             }
             conn.commit();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             rollback(conn);
             e.printStackTrace();
         } finally {
@@ -136,7 +139,7 @@ public class UserDaoJDBCImpl implements UserDao {
             stmt.executeUpdate(SQL);
 
             conn.commit();
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             rollback(conn);
             e.printStackTrace();
         } finally {
